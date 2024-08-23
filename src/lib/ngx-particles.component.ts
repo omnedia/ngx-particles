@@ -38,8 +38,8 @@ export class NgxParticlesComponent implements AfterViewInit {
   @Input("ease")
   ease = 50;
 
-  @Input("refresh")
-  refresh = false;
+  @Input("particleSpeed")
+  particleSpeed = 1;
 
   @Input("vx")
   vx = 0;
@@ -141,14 +141,14 @@ export class NgxParticlesComponent implements AfterViewInit {
       const edge = [
         circle.x + circle.translateX - circle.size, // distance from left edge
         this.canvasRef.nativeElement.width -
-          circle.x -
-          circle.translateX -
-          circle.size, // distance from right edge
+        circle.x -
+        circle.translateX -
+        circle.size, // distance from right edge
         circle.y + circle.translateY - circle.size, // distance from top edge
         this.canvasRef.nativeElement.height -
-          circle.y -
-          circle.translateY -
-          circle.size, // distance from bottom edge
+        circle.y -
+        circle.translateY -
+        circle.size, // distance from bottom edge
       ];
 
       const closestEdge = edge.reduce((a, b) => Math.min(a, b));
@@ -165,8 +165,8 @@ export class NgxParticlesComponent implements AfterViewInit {
         circle.alpha = circle.targetAlpha * remapClosestEdge;
       }
 
-      circle.x += circle.dx + this.vx;
-      circle.y += circle.dy + this.vy;
+      circle.x += (circle.dx + this.vx) * this.particleSpeed;
+      circle.y += (circle.dy + this.vy) * this.particleSpeed;
       circle.translateX +=
         (this.mouse.x / (this.staticity / circle.magnetism) -
           circle.translateX) /

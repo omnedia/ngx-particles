@@ -42,6 +42,7 @@ Use the component in your template:
   [circleColor]="'#ff69b4'"
   [staticity]="60"
   [ease]="40"
+  [particleSpeed]="1"
   [vx]="0.1"
   [vy]="0.1"
   styleClass="custom-particles"
@@ -59,6 +60,7 @@ Use the component in your template:
   [circleColor]="circleColor"
   [staticity]="staticity"
   [ease]="ease"
+  [particleSpeed]="particleSpeed"
   [vx]="vx"
   [vy]="vy"
   styleClass="your-custom-class"
@@ -72,6 +74,7 @@ Use the component in your template:
 - `circleColor` (optional): The color of the particles. Accepts any valid CSS color value (e.g., '#ff69b4', 'rgba(255, 105, 180, 0.8)'). Default is white
 - `staticity` (optional): Controls the responsiveness of the particles to the mouse. Higher values reduce particle movement. Defaults to 50.
 - `ease` (optional): Controls the smoothness of the particle movement. Lower values increase the speed of the transition. Defaults to 50.
+- `particleSpeed` (optional): Controls the speed of the particle movement. Higher values increase the speed of the particles. Defaults to 1.
 - `vx` (optional): Horizontal velocity of the particles. Defaults to 0.
 - `vy` (optional): Vertical velocity of the particles. Defaults to 0.
 - `styleClass` (optional): A custom CSS class to apply to the particle container.
@@ -85,6 +88,7 @@ Use the component in your template:
   [circleColor]="'#00ffcc'"
   [staticity]="70"
   [ease]="30"
+  [particleSpeed]="2"
   [vx]="0.05"
   [vy]="0.05"
   styleClass="particles-background"
