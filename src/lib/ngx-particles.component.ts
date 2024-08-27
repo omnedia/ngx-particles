@@ -5,6 +5,7 @@ import {
   ElementRef,
   HostListener,
   Input,
+  OnDestroy,
   ViewChild,
 } from "@angular/core";
 import { Circle } from "./ngx-particles.types";
@@ -16,7 +17,7 @@ import { Circle } from "./ngx-particles.types";
   templateUrl: "./ngx-particles.component.html",
   styleUrl: "./ngx-particles.component.scss",
 })
-export class NgxParticlesComponent implements AfterViewInit {
+export class NgxParticlesComponent implements AfterViewInit, OnDestroy {
   @ViewChild("OmParticlesCanvas")
   canvasRef!: ElementRef<HTMLCanvasElement>;
 
@@ -69,16 +70,19 @@ export class NgxParticlesComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.setCanvasSize();
-    this.drawParticles();
     this.animate();
 
     this.intersectionObserver = new IntersectionObserver(([entry]) => {
       this.renderContents(entry.isIntersecting);
     });
     this.intersectionObserver.observe(this.canvasRef.nativeElement);
+
+    window.addEventListener("resize", () => this.setCanvasSize());
   }
 
   ngOnDestroy(): void {
+    window.removeEventListener("resize", () => this.setCanvasSize());
+    
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();
     }
@@ -105,6 +109,9 @@ export class NgxParticlesComponent implements AfterViewInit {
       this.wrapperRef.nativeElement.getBoundingClientRect().width;
     this.canvasRef.nativeElement.height =
       this.wrapperRef.nativeElement.getBoundingClientRect().height;
+
+    this.circles = [];
+    this.drawParticles();
   }
 
   private drawParticles(): void {
@@ -151,14 +158,13 @@ export class NgxParticlesComponent implements AfterViewInit {
 
     const { x, y, translateX, translateY, size, alpha } = circle;
     const rgb = this.hexToRgb(this.color);
-    const dpr = typeof window !== "undefined" ? window.devicePixelRatio : 1;
 
     context.translate(translateX, translateY);
     context.beginPath();
     context.arc(x, y, size, 0, 2 * Math.PI);
     context.fillStyle = `rgba(${rgb.join(", ")}, ${alpha})`;
     context.fill();
-    context.setTransform(dpr, 0, 0, dpr, 0, 0);
+    context.setTransform(1, 0, 0, 1, 0, 0);
 
     if (!update) {
       this.circles.push(circle);
