@@ -62,10 +62,42 @@ export class NgxParticlesComponent implements AfterViewInit {
     this.onMouseMove();
   }
 
+  private isInView = false;
+  private isAnimating = false;
+  private animationFrameId?: number;
+  private intersectionObserver?: IntersectionObserver;
+
   ngAfterViewInit(): void {
     this.setCanvasSize();
     this.drawParticles();
     this.animate();
+
+    this.intersectionObserver = new IntersectionObserver(([entry]) => {
+      this.renderContents(entry.isIntersecting);
+    });
+    this.intersectionObserver.observe(this.canvasRef.nativeElement);
+  }
+
+  ngOnDestroy(): void {
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect();
+    }
+
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+    }
+  }
+
+  renderContents(isIntersecting: boolean) {
+    if (isIntersecting && !this.isInView) {
+      this.isInView = true;
+
+      if (!this.isAnimating) {
+        this.animationFrameId = requestAnimationFrame(() => this.animate());
+      }
+    } else if (!isIntersecting) {
+      this.isInView = false;
+    }
   }
 
   private setCanvasSize(): void {
@@ -134,6 +166,11 @@ export class NgxParticlesComponent implements AfterViewInit {
   }
 
   private animate(): void {
+    if (!this.isInView) {
+      this.isAnimating = false;
+      return;
+    }
+
     this.clearContext();
 
     this.circles.forEach((circle: Circle, i: number) => {
@@ -141,14 +178,14 @@ export class NgxParticlesComponent implements AfterViewInit {
       const edge = [
         circle.x + circle.translateX - circle.size, // distance from left edge
         this.canvasRef.nativeElement.width -
-        circle.x -
-        circle.translateX -
-        circle.size, // distance from right edge
+          circle.x -
+          circle.translateX -
+          circle.size, // distance from right edge
         circle.y + circle.translateY - circle.size, // distance from top edge
         this.canvasRef.nativeElement.height -
-        circle.y -
-        circle.translateY -
-        circle.size, // distance from bottom edge
+          circle.y -
+          circle.translateY -
+          circle.size, // distance from bottom edge
       ];
 
       const closestEdge = edge.reduce((a, b) => Math.min(a, b));
@@ -194,7 +231,7 @@ export class NgxParticlesComponent implements AfterViewInit {
       }
     });
 
-    window.requestAnimationFrame(() => this.animate());
+    this.animationFrameId = requestAnimationFrame(() => this.animate());
   }
 
   private clearContext(): void {
