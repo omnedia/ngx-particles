@@ -82,7 +82,7 @@ export class NgxParticlesComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     window.removeEventListener("resize", () => this.setCanvasSize());
-    
+
     if (this.intersectionObserver) {
       this.intersectionObserver.disconnect();
     }
@@ -176,6 +176,8 @@ export class NgxParticlesComponent implements AfterViewInit, OnDestroy {
       this.isAnimating = false;
       return;
     }
+
+    this.isAnimating = true;
 
     this.clearContext();
 
