@@ -128,14 +128,13 @@ export class NgxParticlesComponent implements AfterViewInit, OnDestroy {
 
     const { x, y, translateX, translateY, size, alpha } = circle;
     const rgb = this.hexToRgb(this.color);
-    const dpr = typeof window !== "undefined" ? window.devicePixelRatio : 1;
 
     context.translate(translateX, translateY);
     context.beginPath();
     context.arc(x, y, size, 0, 2 * Math.PI);
     context.fillStyle = `rgba(${rgb.join(", ")}, ${alpha})`;
     context.fill();
-    context.setTransform(dpr, 0, 0, dpr, 0, 0);
+    context.setTransform(1, 0, 0, 1, 0, 0);
 
     if (!update) {
       this.circles.push(circle);
