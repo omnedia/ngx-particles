@@ -5,6 +5,7 @@ import {
   ElementRef,
   HostListener,
   Input,
+  OnDestroy,
   ViewChild,
 } from "@angular/core";
 import { Circle } from "./ngx-particles.types";
@@ -16,7 +17,7 @@ import { Circle } from "./ngx-particles.types";
   templateUrl: "./ngx-particles.component.html",
   styleUrl: "./ngx-particles.component.scss",
 })
-export class NgxParticlesComponent implements AfterViewInit {
+export class NgxParticlesComponent implements AfterViewInit, OnDestroy {
   @ViewChild("OmParticlesCanvas")
   canvasRef!: ElementRef<HTMLCanvasElement>;
 
@@ -64,8 +65,13 @@ export class NgxParticlesComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.setCanvasSize();
-    this.drawParticles();
     this.animate();
+
+    window.addEventListener("resize", () => this.setCanvasSize());
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener("resize", () => this.setCanvasSize());
   }
 
   private setCanvasSize(): void {
@@ -73,6 +79,9 @@ export class NgxParticlesComponent implements AfterViewInit {
       this.wrapperRef.nativeElement.getBoundingClientRect().width;
     this.canvasRef.nativeElement.height =
       this.wrapperRef.nativeElement.getBoundingClientRect().height;
+
+    this.circles = [];
+    this.drawParticles();
   }
 
   private drawParticles(): void {
@@ -141,14 +150,14 @@ export class NgxParticlesComponent implements AfterViewInit {
       const edge = [
         circle.x + circle.translateX - circle.size, // distance from left edge
         this.canvasRef.nativeElement.width -
-        circle.x -
-        circle.translateX -
-        circle.size, // distance from right edge
+          circle.x -
+          circle.translateX -
+          circle.size, // distance from right edge
         circle.y + circle.translateY - circle.size, // distance from top edge
         this.canvasRef.nativeElement.height -
-        circle.y -
-        circle.translateY -
-        circle.size, // distance from bottom edge
+          circle.y -
+          circle.translateY -
+          circle.size, // distance from bottom edge
       ];
 
       const closestEdge = edge.reduce((a, b) => Math.min(a, b));
