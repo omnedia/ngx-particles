@@ -1,14 +1,16 @@
-import { CommonModule } from "@angular/common";
+import {CommonModule, isPlatformBrowser} from "@angular/common";
 import {
   AfterViewInit,
   Component,
   ElementRef,
   HostListener,
+  Inject,
   Input,
   OnDestroy,
+  PLATFORM_ID,
   ViewChild,
 } from "@angular/core";
-import { Circle } from "./ngx-particles.types";
+import {Circle} from "./ngx-particles.types";
 
 @Component({
   selector: "om-particles",
@@ -48,8 +50,8 @@ export class NgxParticlesComponent implements AfterViewInit, OnDestroy {
   @Input("vy")
   vy = 0;
 
-  private mousePosition: { x: number; y: number } = { x: 0, y: 0 };
-  private mouse: { x: number; y: number } = { x: 0, y: 0 };
+  private mousePosition: { x: number; y: number } = {x: 0, y: 0};
+  private mouse: { x: number; y: number } = {x: 0, y: 0};
 
   private circles: Circle[] = [];
 
@@ -68,14 +70,21 @@ export class NgxParticlesComponent implements AfterViewInit, OnDestroy {
   private animationFrameId?: number;
   private intersectionObserver?: IntersectionObserver;
 
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: object
+  ) {
+  }
+
   ngAfterViewInit(): void {
     this.setCanvasSize();
     this.animate();
 
-    this.intersectionObserver = new IntersectionObserver(([entry]) => {
-      this.renderContents(entry.isIntersecting);
-    });
-    this.intersectionObserver.observe(this.canvasRef.nativeElement);
+    if (isPlatformBrowser(this.platformId)) {
+      this.intersectionObserver = new IntersectionObserver(([entry]) => {
+        this.renderContents(entry.isIntersecting);
+      });
+      this.intersectionObserver.observe(this.canvasRef.nativeElement);
+    }
 
     window.addEventListener("resize", () => this.setCanvasSize());
   }
@@ -156,7 +165,7 @@ export class NgxParticlesComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    const { x, y, translateX, translateY, size, alpha } = circle;
+    const {x, y, translateX, translateY, size, alpha} = circle;
     const rgb = this.hexToRgb(this.color);
 
     context.translate(translateX, translateY);
@@ -186,14 +195,14 @@ export class NgxParticlesComponent implements AfterViewInit, OnDestroy {
       const edge = [
         circle.x + circle.translateX - circle.size, // distance from left edge
         this.canvasRef.nativeElement.width -
-          circle.x -
-          circle.translateX -
-          circle.size, // distance from right edge
+        circle.x -
+        circle.translateX -
+        circle.size, // distance from right edge
         circle.y + circle.translateY - circle.size, // distance from top edge
         this.canvasRef.nativeElement.height -
-          circle.y -
-          circle.translateY -
-          circle.size, // distance from bottom edge
+        circle.y -
+        circle.translateY -
+        circle.size, // distance from bottom edge
       ];
 
       const closestEdge = edge.reduce((a, b) => Math.min(a, b));
@@ -259,7 +268,7 @@ export class NgxParticlesComponent implements AfterViewInit, OnDestroy {
 
   private onMouseMove(): void {
     const rect = this.canvasRef.nativeElement.getBoundingClientRect();
-    const { w, h } = {
+    const {w, h} = {
       w: this.canvasRef.nativeElement.width,
       h: this.canvasRef.nativeElement.height,
     };
@@ -270,7 +279,7 @@ export class NgxParticlesComponent implements AfterViewInit, OnDestroy {
     const inside = x < w / 2 && x > -w / 2 && y < h / 2 && y > -h / 2;
 
     if (inside) {
-      this.mouse = { x: x, y: y };
+      this.mouse = {x: x, y: y};
     }
   }
 
