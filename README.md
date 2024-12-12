@@ -1,5 +1,13 @@
 # ngx-particles
 
+<a href="https://ngxui.com" target="_blank" style="display: flex;gap: .5rem;align-items: center;cursor: pointer; padding: 0 0 0 0; height: fit-content;">
+  <img src="https://ngxui.com/assets/img/ngxui-logo.png" style="width: 64px;height: 64px;">
+  <p style="font-weight: bold; padding: 0; margin: 0; font-size: 4rem">NGXUI</p>
+</a>
+
+This Library is part of the NGXUI ecosystem. <br>
+View all available components at https://ngxui.com
+
 `@omnedia/ngx-particles` is an Angular library that provides a dynamic and interactive particle animation effect. The particles react to mouse movements, creating a visually engaging and customizable background for your Angular components.
 
 ## Features
@@ -21,21 +29,23 @@ npm install @omnedia/ngx-particles
 Import the `NgxParticlesComponent` in your Angular module or component:
 
 ```typescript
-import { NgxParticlesComponent } from '@omnedia/ngx-particles';
+import {NgxParticlesComponent} from '@omnedia/ngx-particles';
 
 @Component({
   ...
-  imports: [
-    ...
-    NgxParticlesComponent,
-  ],
+    imports:
+[
   ...
+    NgxParticlesComponent,
+],
+...
 })
 ```
 
 Use the component in your template:
 
 ```html
+
 <om-particles
   [quantity]="150"
   [size]="0.5"
@@ -54,6 +64,7 @@ Use the component in your template:
 ## API
 
 ```html
+
 <om-particles
   [quantity]="quantity"
   [size]="size"
@@ -82,6 +93,7 @@ Use the component in your template:
 ## Example
 
 ```html
+
 <om-particles
   [quantity]="200"
   [size]="0.6"
