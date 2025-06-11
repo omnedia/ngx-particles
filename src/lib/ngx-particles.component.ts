@@ -1,6 +1,7 @@
 import {CommonModule, isPlatformBrowser} from "@angular/common";
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   HostListener,
@@ -8,6 +9,7 @@ import {
   Input,
   OnDestroy,
   PLATFORM_ID,
+  signal,
   ViewChild,
 } from "@angular/core";
 import {Circle} from "./ngx-particles.types";
@@ -18,6 +20,7 @@ import {Circle} from "./ngx-particles.types";
   imports: [CommonModule],
   templateUrl: "./ngx-particles.component.html",
   styleUrl: "./ngx-particles.component.scss",
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NgxParticlesComponent implements AfterViewInit, OnDestroy {
   @ViewChild("OmParticlesCanvas")
@@ -33,7 +36,7 @@ export class NgxParticlesComponent implements AfterViewInit, OnDestroy {
   size = 0.4;
 
   @Input("circleColor")
-  color = "#ffffff";
+  color = "#9c9c9c";
 
   @Input("staticity")
   staticity = 50;
@@ -65,8 +68,8 @@ export class NgxParticlesComponent implements AfterViewInit, OnDestroy {
     this.onMouseMove();
   }
 
-  private isInView = false;
-  private isAnimating = false;
+  private isInView = signal(false);
+  private isAnimating = signal(false);
   private animationFrameId?: number;
   private intersectionObserver?: IntersectionObserver;
 
@@ -102,14 +105,14 @@ export class NgxParticlesComponent implements AfterViewInit, OnDestroy {
   }
 
   renderContents(isIntersecting: boolean) {
-    if (isIntersecting && !this.isInView) {
-      this.isInView = true;
+    if (isIntersecting && !this.isInView()) {
+      this.isInView.set(true);
 
-      if (!this.isAnimating) {
+      if (!this.isAnimating()) {
         this.animationFrameId = requestAnimationFrame(() => this.animate());
       }
     } else if (!isIntersecting) {
-      this.isInView = false;
+      this.isInView.set(false);
     }
   }
 
@@ -181,12 +184,12 @@ export class NgxParticlesComponent implements AfterViewInit, OnDestroy {
   }
 
   private animate(): void {
-    if (!this.isInView) {
-      this.isAnimating = false;
+    if (!this.isInView()) {
+      this.isAnimating.set(false);
       return;
     }
 
-    this.isAnimating = true;
+    this.isAnimating.set(true);
 
     this.clearContext();
 
